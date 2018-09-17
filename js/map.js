@@ -6,6 +6,12 @@ var typesOfAccomodation = ['palace', 'flat', 'house', 'bungalo'];
 var checkins = ['12:00', '13:00', '14:00'];
 var features = ['wifi', 'dishwasher', 'parking', 'washer', 'elevator', 'conditioner'];
 var photos = ['http://o0.github.io/assets/images/tokyo/hotel1.jpg', 'http://o0.github.io/assets/images/tokyo/hotel2.jpg', 'http://o0.github.io/assets/images/tokyo/hotel3.jpg'];
+var homeTypeNames = {
+  flat: 'Квартира',
+  bungalo: 'Бунгало',
+  house: 'Дом',
+  palace: 'Дворец'
+};
 
 // генератор случайных целых чисел
 function getRandomIntInclusive(min, max) {
@@ -141,18 +147,7 @@ var createDomElementCard = function (objectItem) {
   element.textContent = price + elementSpan.textContent;
   // type
   element = domElement.querySelector('.popup__type');
-  if (objectItem.offer.type === 'flat') {
-    element.textContent = 'Квартира';
-  }
-  if (objectItem.offer.type === 'bungalo') {
-    element.textContent = 'Бунгало';
-  }
-  if (objectItem.offer.type === 'house') {
-    element.textContent = 'Дом';
-  }
-  if (objectItem.offer.type === 'palace') {
-    element.textContent = 'Дворец';
-  }
+  element.textContent = homeTypeNames[objectItem.offer.type];
   // capacity, guests
   element = domElement.querySelector('.popup__text--capacity');
   element.textContent = objectItem.offer.rooms + ' комнаты для ' + objectItem.offer.guests + ' гостей';
