@@ -98,6 +98,10 @@ var createDomElementPin = function (objectItem) {
   element.src = objectItem.author.avatar;
   element.alt = objectItem.offer.title;
 
+  domElement.addEventListener('click', function () {
+    drawCard(objectItem);
+  });
+
   return domElement;
 };
 
@@ -174,22 +178,73 @@ var createDomElementCard = function (objectItem) {
 
 // отрисовка и вставка DOM-элемента на странице
 // pins
-var parentDomElement = document.querySelector('.map__pins');
-var fragment = document.createDocumentFragment();
-for (var k = 0; k < advtItems.length; k++) {
-  var domElementFinal = createDomElementPin(advtItems[k]);
-  fragment.appendChild(domElementFinal);
-}
-
-parentDomElement.appendChild(fragment);
+var drawPins = function () {
+  var parentDomElement = document.querySelector('.map__pins');
+  var fragment = document.createDocumentFragment();
+  for (var k = 0; k < advtItems.length; k++) {
+    var domElementFinal = createDomElementPin(advtItems[k]);
+    fragment.appendChild(domElementFinal);
+  }
+  parentDomElement.appendChild(fragment);
+};
 
 // cards
-var parentDomElementMap = document.querySelector('.map');
-var childDomElement = parentDomElementMap.querySelector('.map__filters-container');
-var fragmentMap = document.createDocumentFragment();
-for (var j = 0; j < advtItems.length; j++) {
-  var domElementFinalMap = createDomElementCard(advtItems[j]);
+var drawCard = function (objItem) {
+  var parentDomElementMap = document.querySelector('.map');
+  var childDomElement = parentDomElementMap.querySelector('.map__filters-container');
+  var fragmentMap = document.createDocumentFragment();
+  var domElementFinalMap = createDomElementCard(objItem);
   fragmentMap.appendChild(domElementFinalMap);
-}
+  parentDomElementMap.insertBefore(fragmentMap, childDomElement);
+};
 
-parentDomElementMap.insertBefore(fragmentMap, childDomElement);
+// События
+var mapEl = document.querySelector('.map');
+var adFormEl = document.querySelector('.ad-form');
+var adFormHeaderEl = adFormEl.querySelector('.ad-form-header');
+var adFormElCollection = adFormEl.querySelectorAll('.ad-form__element');
+var mapPinMain = document.querySelector('.map__pin--main');
+var mapFiltersElCollection = mapEl.querySelectorAll('.map__filter');
+var MAIN_PIN_SIZE = 156;
+var mainPinX = mapPinMain.style.left;
+var mainPinY = mapPinMain.style.top;
+var mapPinMainCoordsEl = adFormEl.querySelector('#address');
+
+var setAddrCoords = function (isDefault) {
+  mapPinMainCoordsEl.value = isDefault ? mainPinX + ',' + mainPinY : (parseInt(mainPinX, 10) - MAIN_PIN_SIZE) + 'px' + ', ' + (parseInt(mainPinY, 10) - MAIN_PIN_SIZE) + 'px';
+  return mapPinMainCoordsEl;
+};
+
+// переводим в неактивный режим
+var onPageFirstLoad = function () {
+  mapEl.classList.add('map--faded');
+  adFormEl.classList.add('ad-form--disabled');
+  adFormHeaderEl.setAttribute('disabled', 'disabled');
+  for (var d = 0; d < adFormElCollection.length; d++) {
+    adFormElCollection[d].setAttribute('disabled', 'disabled');
+  }
+  for (var t = 0; t < mapFiltersElCollection.length; t++) {
+    mapFiltersElCollection[t].setAttribute('disabled', 'disabled');
+  }
+  setAddrCoords(true);
+  document.removeEventListener('DOMContentLoaded', onPageFirstLoad);
+};
+
+document.addEventListener('DOMContentLoaded', onPageFirstLoad);
+
+// переводим в активный режим
+var onPageFirstLoadReverse = function () {
+  mapEl.classList.remove('map--faded');
+  adFormEl.classList.remove('ad-form--disabled');
+  adFormHeaderEl.removeAttribute('disabled');
+  for (var d = 0; d < adFormElCollection.length; d++) {
+    adFormElCollection[d].removeAttribute('disabled');
+  }
+  for (var t = 0; t < mapFiltersElCollection.length; t++) {
+    mapFiltersElCollection[t].removeAttribute('disabled');
+  }
+  drawPins();
+  setAddrCoords(false);
+};
+
+mapPinMain.addEventListener('mouseup', onPageFirstLoadReverse);
