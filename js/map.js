@@ -238,13 +238,12 @@ var drawCard = function (objItem) {
   fragmentMap.appendChild(domElementFinalMap);
   parentDomElementMap.insertBefore(fragmentMap, childDomElement);
   articleEl = mapEl.querySelector('article');
-  console.log('articleEl' + articleEl);
 };
 
 // События
 var setAddrCoords = function (isDefault) {
   var defaultCoords = mainPinX + ',' + mainPinY;
-  var mainPinCoords = (parseInt(mainPinX, 10) - MAIN_PIN_SIZE) + 'px' + ', ' +  (parseInt(mainPinY, 10) - MAIN_PIN_SIZE) + 'px';
+  var mainPinCoords = (parseInt(mainPinX, 10) - MAIN_PIN_SIZE) + 'px' + ', ' + (parseInt(mainPinY, 10) - MAIN_PIN_SIZE) + 'px';
   mapPinMainCoordsEl.value = isDefault ? defaultCoords : mainPinCoords;
   return mapPinMainCoordsEl;
 };
@@ -256,7 +255,6 @@ var fillArr = function (idx, obj) {
   for (var o = 0; o < arrIdxSelCapacity.length; o++) {
     var arrItemValue = arrIdxSelCapacity[o];
     capacityEls[o] = capacityCollection[arrItemValue];
-    console.log('Заполнение массива элементов: ' + capacityEls[o]);
   }
   return capacityEls;
 
