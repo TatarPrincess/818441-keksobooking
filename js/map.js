@@ -35,8 +35,8 @@ var adFormCheckInEl = adFormEl.querySelector('#timein');
 var adFormCheckOutEl = adFormEl.querySelector('#timeout');
 var roomNumberEl = adFormEl.querySelector('#room_number');
 var capacityParentEl = adFormEl.querySelector('#capacity');
-var LAST_CAPACITY_OPTION = 3;
-var initcapacityParentNode = capacityParentEl.cloneNode(true);
+var capacityCollection = adFormEl.querySelectorAll('#capacity option');
+var articleEl = '';
 
 // генератор случайных целых чисел
 function getRandomIntInclusive(min, max) {
@@ -237,32 +237,40 @@ var drawCard = function (objItem) {
   var domElementFinalMap = createDomElementCard(objItem);
   fragmentMap.appendChild(domElementFinalMap);
   parentDomElementMap.insertBefore(fragmentMap, childDomElement);
+  articleEl = mapEl.querySelector('article');
+  console.log('articleEl' + articleEl);
 };
 
 // События
 var setAddrCoords = function (isDefault) {
-  mapPinMainCoordsEl.value = isDefault ? mainPinX + ',' + mainPinY : (parseInt(mainPinX, 10) - MAIN_PIN_SIZE) + 'px' + ', ' +
-   (parseInt(mainPinY, 10) - MAIN_PIN_SIZE) + 'px';
+  var defaultCoords = mainPinX + ',' + mainPinY;
+  var mainPinCoords = (parseInt(mainPinX, 10) - MAIN_PIN_SIZE) + 'px' + ', ' +  (parseInt(mainPinY, 10) - MAIN_PIN_SIZE) + 'px';
+  mapPinMainCoordsEl.value = isDefault ? defaultCoords : mainPinCoords;
   return mapPinMainCoordsEl;
 };
 
-var setCapacityElOption = function (optionIndex) {
-  var fillArr = function (idx) {
-    var capacityEls = [];
-    if (idx === LAST_CAPACITY_OPTION) {
-      var e = initcapacityParentNode.querySelector(':nth-child(1)');
-      capacityEls[0] = e;
-    } else {
-      for (var h = 1; h <= idx + 1; h++) {
-        var nthIdx = h + 1;
-        capacityEls.push(initcapacityParentNode.querySelector(':nth-child(' + nthIdx + ')'));
-      }
-    }
-    return capacityEls;
-  };
+var fillArr = function (idx, obj) {
+  var capacityEls = [];
+  var arrIdxSelCapacity = obj[idx];
 
-  var capacityEls = fillArr(optionIndex);
+  for (var o = 0; o < arrIdxSelCapacity.length; o++) {
+    var arrItemValue = arrIdxSelCapacity[o];
+    capacityEls[o] = capacityCollection[arrItemValue];
+    console.log('Заполнение массива элементов: ' + capacityEls[o]);
+  }
+  return capacityEls;
+
+};
+
+var setCapacityElOption = function (optionIndex) {
+  var roomCapacityObj = {
+    0: [1],
+    1: [1, 2],
+    2: [1, 2, 3],
+    3: [0]
+  };
   capacityParentEl.innerHTML = '';
+  var capacityEls = fillArr(optionIndex, roomCapacityObj);
   addCapacityOptions(capacityEls);
   return adFormEl.querySelector('#capacity');
 };
@@ -297,8 +305,8 @@ var pageDeactivate = function (isReset) {
     mapFiltersElCollection[t].setAttribute('disabled', 'disabled');
   }
   if (isReset) {
-    if (mapEl.querySelector('article')) {
-      mapEl.querySelector('article').setAttribute('hidden', 'true');
+    if (articleEl) {
+      articleEl.setAttribute('hidden', 'true');
     }
   }
   var pinDomElCollection = pinParentDomEl.querySelectorAll('.map__pin:not(.map__pin--main)');
