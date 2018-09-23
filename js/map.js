@@ -364,7 +364,7 @@ mapPinMain.addEventListener('mousedown', function (evt) {
   };
   var dragged = false;
 
-  var onMouseMove = function (moveEvt) {
+  var getNewCoords = function (obj) {
     // накладываем границы перетаскивания на вычисленные новые координаты
     var applyLimits = function (rawNewCoordsObj) {
       var limits = {
@@ -388,13 +388,13 @@ mapPinMain.addEventListener('mousedown', function (evt) {
     };
 
     var shift = {
-      x: startCoords.x - moveEvt.clientX,
-      y: startCoords.y - moveEvt.clientY
+      x: startCoords.x - obj.clientX,
+      y: startCoords.y - obj.clientY
     };
 
     startCoords = {
-      x: moveEvt.clientX,
-      y: moveEvt.clientY
+      x: obj.clientX,
+      y: obj.clientY
     };
 
     var newMapPinCoords = {
@@ -404,12 +404,17 @@ mapPinMain.addEventListener('mousedown', function (evt) {
 
     applyLimits(newMapPinCoords);
     renewCoordsAddress(newMapPinCoords.x, newMapPinCoords.y);
+  };
+
+  var onMouseMove = function (moveEvt) {
+    getNewCoords(moveEvt);
     dragged = true;
   };
-  var onMouseUp = function () {
-
+  var onMouseUp = function (upEvt) {
     if (dragged) {
       pageActivate();
+    } else {
+      getNewCoords(upEvt);
     }
     document.removeEventListener('mousemove', onMouseMove);
     document.removeEventListener('mouseup', onMouseUp);
