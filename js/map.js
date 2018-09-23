@@ -246,21 +246,12 @@ var drawCard = function (objItem) {
   articleEl = mapEl.querySelector('article');
 };
 
-// События
-/* var setAddrCoords = function (isDefault) {
-  var defaultCoords = mainPinX + ',' + mainPinY;
-  var mainPinCoords = (parseInt(mainPinX, 10) - MAIN_PIN_SIZE) + 'px' + ', ' + (parseInt(mainPinY, 10) - MAIN_PIN_SIZE) + 'px';
-  mapPinMainCoordsEl.value = isDefault ? defaultCoords : mainPinCoords;
-  return mapPinMainCoordsEl;
-};*/
-
 var setAddrCoords = function (coordX, coordY) {
   var defaultCoords = mainPinX + ',' + mainPinY;
   var mainPinCoords = (coordX - MAIN_PIN_SIZE) + 'px' + ', ' + (coordY - MAIN_PIN_SIZE) + 'px';
-  console.log('вычислили address с учетом размеров метки: ' + mainPinCoords);
   // проставляем в input address value переданных координат
   mapPinMainCoordsEl.value = coordX ? mainPinCoords : defaultCoords;
-  console.log('проставили в инпут адреса новые координаты: ' + mapPinMainCoordsEl.value);
+
   return mapPinMainCoordsEl.value;
 };
 
@@ -364,32 +355,24 @@ mapPinMain.addEventListener('mousedown', function (evt) {
     x: evt.clientX,
     y: evt.clientY
   };
-  console.log('startCoords: ' + startCoords.x + ', ' + startCoords.y);
   // функция обновляет стили перетаскивааемому элементу и обновляет адрес на форме
   var renewCoordsAddress = function (newX, newY) {
-    console.log('перешли в renewCoordsAddress');
     var result = newX ? setAddrCoords(newX, newY) : setAddrCoords();
-    console.log('вышли из setAddrCoords' + result);
     mapPinMain.style.left = newX + 'px';
-    console.log('новый стиль left' + mapPinMain.style.left);
     mapPinMain.style.top = newY + 'px';
-    console.log('новый стиль top' + mapPinMain.style.top);
     return result;
   };
   var dragged = false;
-  console.log('dragged на mousedown: ' + dragged);
 
   var onMouseMove = function (moveEvt) {
     // накладываем границы перетаскивания на вычисленные новые координаты
     var applyLimits = function (rawNewCoordsObj) {
-      console.log('накладываем границы перетаскивания на вычисленные новые координаты');
       var limits = {
         top: mapPinMain.offsetHeight,
         right: mapEl.offsetWidth - mapPinMain.offsetWidth,
         bottom: mapEl.offsetHeight - mapPinMain.offsetHeight,
         left: 0
       };
-      console.log('limits:' + limits.top + ', ' + limits. bottom + ', ' + limits.left + ', ' + limits.right);
       if (rawNewCoordsObj.x > limits.right) {
         rawNewCoordsObj.x = limits.right;
       } else if (rawNewCoordsObj.x < limits.left) {
