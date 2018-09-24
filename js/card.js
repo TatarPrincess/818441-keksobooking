@@ -102,7 +102,7 @@
   };
 
   window.card = {
-    drawCard: drawCard,
-    hideCard: hideCard
+    draw: drawCard,
+    hide: hideCard
   };
 })();

@@ -153,7 +153,7 @@
     mapEl.classList.add('map--faded');
     changeFormOnPageDeactivate();
     if (isReset) {
-      window.card.hideCard();
+      window.card.hide();
     }
     window.pin.hidePins();
     document.removeEventListener('DOMContentLoaded', onPageFirstLoad);

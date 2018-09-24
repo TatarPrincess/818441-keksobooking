@@ -21,7 +21,7 @@
     element.alt = objectItem.offer.title;
 
     domElement.addEventListener('click', function () {
-      window.card.drawCard(objectItem);
+      window.card.draw(objectItem);
     });
 
     return domElement;
