@@ -32,9 +32,7 @@
     var parentElement = elementCard.querySelector('div');
     var template = elementCard.querySelector('div img');
     parentElement.innerHTML = '';
-    console.log('objectItem: ' + objectItem);
     var photosArr = objectItem.offer.photos;
-    console.log('photosArr: ' + photosArr);
     for (var n = 0; n < photosArr.length; n++) {
       var domElement = template.cloneNode(true);
       domElement.src = photosArr[n];
