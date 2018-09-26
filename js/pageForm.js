@@ -16,19 +16,30 @@
   var MAIN_PIN_SIZE = 156;
   var mapPinMainCoordsEl = adFormEl.querySelector('#address');
   var formHouseTypeEl = adFormEl.querySelector('#type');
+  var formHouseTypeColl = formHouseTypeEl.querySelectorAll('option');
   var formHouseTypePriceEl = adFormEl.querySelector('#price');
   var adFormResetEl = adFormEl.querySelector('.ad-form__reset');
   var adFormCheckInEl = adFormEl.querySelector('#timein');
+  var adFormCheckInColl = adFormCheckInEl.querySelectorAll('option');
   var adFormCheckOutEl = adFormEl.querySelector('#timeout');
+  var adFormCheckOutColl = adFormCheckOutEl.querySelectorAll('option');
   var roomNumberEl = adFormEl.querySelector('#room_number');
+  var roomNumberColl = roomNumberEl.querySelectorAll('option');
   var capacityParentEl = adFormEl.querySelector('#capacity');
   var capacityCollection = adFormEl.querySelectorAll('#capacity option');
+  var submitFormEl = adFormEl.querySelector('.ad-form__submit');
+  var formTitle = document.querySelector('#title');
+  var featureColl = adFormEl.querySelectorAll('.feature__checkbox');
+  var descriptionEl = adFormEl.querySelector('#description');
   var ROOM_CAPACITY_OBJ = {
     0: [1],
     1: [1, 2],
     2: [1, 2, 3],
     3: [0]
   };
+  var ROOM_NUMBER_OPTION_DEFAULT = '1';
+  var CHECKIN_OPTION_DEFAULT = '12:00';
+  var HOUSE_TP_OPTION_DEFAULT = 'flat';
 
   // создание элементов в DOM-дереве
   var createDomElementCapacity = function (arrEl) {
@@ -93,7 +104,6 @@
   var changeFormOnPageDeactivate = function () {
     adFormEl.classList.add('ad-form--disabled');
     adFormHeaderEl.setAttribute('disabled', 'disabled');
-    var formTitle = document.querySelector('#title');
     formTitle.value = '';
     for (var d = 0; d < adFormElCollection.length; d++) {
       adFormElCollection[d].setAttribute('disabled', 'disabled');
@@ -139,10 +149,12 @@
   // PAGE
   var onPageFirstLoad = function () {
     pageDeactivate(false);
+    window.backend.load(window.data.onLoad, window.data.onError);
   };
 
   var pageActivate = function () {
     mapEl.classList.remove('map--faded');
+    // window.backend.load(window.data.onLoad, window.data.onError);
     window.pin.drawPins();
     changeFormOnPageActivate();
   };
@@ -159,12 +171,53 @@
     document.removeEventListener('DOMContentLoaded', onPageFirstLoad);
   };
 
+  var setElAttr = function (targetEl) {
+    targetEl.selected = true;
+    return targetEl;
+  };
+
+  var changeFormOnSubmit = function () {
+    formTitle.value = '';
+    formHouseTypePriceEl.value = '';
+    setAddrCoords();
+    for (var k = 0; k < formHouseTypeColl.length; k++) {
+      if (formHouseTypeColl[k].value === HOUSE_TP_OPTION_DEFAULT) {
+        setElAttr(formHouseTypeColl[k]);
+      }
+    }
+    for (var l = 0; l < adFormCheckInColl.length; l++) {
+      if (adFormCheckInColl[l].value === CHECKIN_OPTION_DEFAULT) {
+        setElAttr(adFormCheckInColl[l]);
+        setElAttr(adFormCheckOutColl[l]);
+      }
+    }
+    for (var m = 0; m < roomNumberColl.length; m++) {
+      if (roomNumberColl[m].value === ROOM_NUMBER_OPTION_DEFAULT) {
+        setElAttr(roomNumberColl[m]);
+        setCapacityElOption(roomNumberEl.selectedIndex);
+      }
+    }
+    for (var i = 0; i < featureColl.length; i++) {
+      featureColl[i].checked = false;
+    }
+    descriptionEl.value = '';
+    window.pin.restylePin();
+  };
+
+  var onLoad = function () {
+    changeFormOnSubmit();
+  };
+
   // события
   document.addEventListener('DOMContentLoaded', onPageFirstLoad);
-
+  submitFormEl.addEventListener('click', function (evt) {
+    evt.preventDefault();
+    window.backend.save(new FormData(adFormEl), onLoad, window.data.onError);
+  });
 
   window.pageForm = {
     setAddrCoords: setAddrCoords,
-    pageActivate: pageActivate
+    pageActivate: pageActivate,
+    onLoad: onLoad
   };
 })();
