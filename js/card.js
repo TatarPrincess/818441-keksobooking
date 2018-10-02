@@ -9,7 +9,7 @@
     palace: 'Дворец'
   };
   var mapEl = document.querySelector('.map');
-  var articleEl = '';
+  var articleEl;
 
   // создание элементов в DOM-дереве
 
@@ -83,8 +83,17 @@
     return domElement;
   };
 
+  // скрытие карточки
+  var hideCard = function () {
+    if (articleEl) {
+      articleEl.setAttribute('hidden', 'true');
+    }
+  };
   // ОТРИСОВКА DOM-ЭЛЕМЕНТА на странице
   var drawCard = function (objItem) {
+    if (articleEl) {
+      articleEl.remove();
+    }
     var parentDomElementMap = document.querySelector('.map');
     var childDomElement = parentDomElementMap.querySelector('.map__filters-container');
     var fragmentMap = document.createDocumentFragment();
@@ -92,13 +101,18 @@
     fragmentMap.appendChild(domElementFinalMap);
     parentDomElementMap.insertBefore(fragmentMap, childDomElement);
     articleEl = mapEl.querySelector('article');
-  };
+    var popupClose = articleEl.querySelector('.popup__close');
 
-  // скрытие карточки
-  var hideCard = function () {
-    if (articleEl) {
-      articleEl.setAttribute('hidden', 'true');
-    }
+
+    // закрытие карточки
+    var onCardPopupKeydown = function (evt) {
+      window.util.isEnterEvent(evt, hideCard());
+    };
+    var onCardPopupCloseClick = function () {
+      hideCard();
+    };
+    popupClose.addEventListener('keydown', onCardPopupKeydown);
+    popupClose.addEventListener('click', onCardPopupCloseClick);
   };
 
   window.card = {

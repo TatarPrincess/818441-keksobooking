@@ -4,6 +4,7 @@
   var mapPinMain = document.querySelector('.map__pin--main');
   var mainPinX = mapPinMain.style.left;
   var mainPinY = mapPinMain.style.top;
+  var pinDomElCollection;
 
   // создаем dom-элемент пина
   var createDomElementPin = function (objectItem) {
@@ -38,20 +39,27 @@
 
   // отрисовываем dom-элемент пина
   var pinParentDomEl = document.querySelector('.map__pins');
-  var drawPins = function () {
+  var drawPins = function (array) {
+    var arrayToDraw = (array) ? array : window.data.advtItems;
     var fragment = document.createDocumentFragment();
-    for (var k = 0; k < window.data.advtItems.length; k++) {
-      var domElementFinal = createDomElementPin(window.data.advtItems[k]);
+    for (var k = 0; k < arrayToDraw.length; k++) {
+      var domElementFinal = createDomElementPin(arrayToDraw[k]);
       fragment.appendChild(domElementFinal);
     }
     pinParentDomEl.appendChild(fragment);
+    pinDomElCollection = document.querySelectorAll('.map__pin:not(.map__pin--main)');
   };
 
-  // скрываем dom-элемент пина
+  // скрытие и удаление dom-элемента пина
   var hidePins = function () {
-    var pinDomElCollection = pinParentDomEl.querySelectorAll('.map__pin:not(.map__pin--main)');
     for (var c = 0; c < pinDomElCollection.length; c++) {
       pinDomElCollection[c].setAttribute('hidden', 'true');
+    }
+  };
+
+  var clearPins = function () {
+    for (var q = 0; q < pinDomElCollection.length; q++) {
+      pinDomElCollection[q].remove();
     }
   };
   // экспорт в глобальную область видимости
@@ -59,6 +67,7 @@
     drawPins: drawPins,
     hidePins: hidePins,
     restylePin: restylePin,
+    clearPins: clearPins,
     mainPinX: mainPinX,
     mainPinY: mainPinY
   };
