@@ -166,8 +166,8 @@
     changeFormOnPageDeactivate();
     if (isReset) {
       window.card.hide();
+      window.pin.hidePins();
     }
-    window.pin.hidePins();
     document.removeEventListener('DOMContentLoaded', onPageFirstLoad);
   };
 
