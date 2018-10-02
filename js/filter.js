@@ -77,7 +77,7 @@
       conditioner: getCheckedInputValue(featuresConditioner)
     };
 
-    var filteredBy = objArr;
+    var filteredBy = objArr.slice(0);
     // тип жилья
     if (value.type !== 'any') {
       filteredBy = filteredBy.filter(function (item) {
