@@ -165,6 +165,7 @@
     mapEl.classList.add('map--faded');
     changeFormOnPageDeactivate();
     if (isReset) {
+      window.filter.resetFilterForm();
       window.card.hide();
       window.pin.hidePins();
     }

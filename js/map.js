@@ -1,7 +1,7 @@
 'use strict';
 
 (function () {
-  var mapEl = document.querySelector('.map');
+  var mapEl = window.filter.mapEl;
   var mapPinMain = document.querySelector('.map__pin--main');
 
   // ДОБАВЛЯЕМ СОБЫТИЯ
@@ -76,7 +76,4 @@
     document.addEventListener('mouseup', onMouseUp);
   });
 
-  window.map = {
-    mapEl: mapEl
-  };
 })();
