@@ -767,6 +767,7 @@ fieldset {
   display: -ms-flexbox;
   display: flex;
   margin-right: 10px;
+  z-index: 0;
 
   width: 150px;
   min-height: 70px;

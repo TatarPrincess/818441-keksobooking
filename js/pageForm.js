@@ -219,6 +219,7 @@
   window.pageForm = {
     setAddrCoords: setAddrCoords,
     pageActivate: pageActivate,
-    onLoad: onLoad
+    onLoad: onLoad,
+    formEl: adFormEl
   };
 })();
