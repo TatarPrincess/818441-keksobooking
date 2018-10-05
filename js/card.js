@@ -10,6 +10,7 @@
   };
   var mapEl = document.querySelector('.map');
   var articleEl;
+  var popupClose;
 
   // создание элементов в DOM-дереве
 
@@ -33,11 +34,11 @@
     var template = elementCard.querySelector('div img');
     parentElement.innerHTML = '';
     var photosArr = objectItem.offer.photos;
-    for (var n = 0; n < photosArr.length; n++) {
+    photosArr.forEach(function (item, i) {
       var domElement = template.cloneNode(true);
-      domElement.src = photosArr[n];
+      domElement.src = photosArr[i];
       parentElement.appendChild(domElement);
-    }
+    });
     return elementCard;
   };
 
@@ -83,17 +84,23 @@
     return domElement;
   };
 
-  // скрытие карточки
-  var hideCard = function () {
-    if (articleEl) {
-      articleEl.setAttribute('hidden', 'true');
-    }
+  var onCardPopupKeydown = function (evt) {
+    window.util.isEnterEvent(evt, removeCard);
   };
-  // ОТРИСОВКА DOM-ЭЛЕМЕНТА на странице
-  var drawCard = function (objItem) {
+  var onCardPopupCloseClick = function () {
+    removeCard();
+  };
+
+  var removeCard = function () {
     if (articleEl) {
+      popupClose.removeEventListener('keydown', onCardPopupKeydown);
+      popupClose.removeEventListener('click', onCardPopupCloseClick);
       articleEl.remove();
     }
+  };
+  // отрисовка карточки
+  var drawCard = function (objItem) {
+    removeCard();
     var parentDomElementMap = document.querySelector('.map');
     var childDomElement = parentDomElementMap.querySelector('.map__filters-container');
     var fragmentMap = document.createDocumentFragment();
@@ -101,22 +108,15 @@
     fragmentMap.appendChild(domElementFinalMap);
     parentDomElementMap.insertBefore(fragmentMap, childDomElement);
     articleEl = mapEl.querySelector('article');
-    var popupClose = articleEl.querySelector('.popup__close');
-
+    popupClose = articleEl.querySelector('.popup__close');
 
     // закрытие карточки
-    var onCardPopupKeydown = function (evt) {
-      window.util.isEnterEvent(evt, hideCard());
-    };
-    var onCardPopupCloseClick = function () {
-      hideCard();
-    };
     popupClose.addEventListener('keydown', onCardPopupKeydown);
     popupClose.addEventListener('click', onCardPopupCloseClick);
   };
 
   window.card = {
     draw: drawCard,
-    hide: hideCard
+    remove: removeCard
   };
 })();

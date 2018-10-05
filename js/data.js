@@ -40,6 +40,7 @@
         },
       };
     }
+    window.pin.drawPins();
   };
 
   var onError = function (errMsg) {
@@ -50,9 +51,11 @@
     element.textContent = errMsg;
     var parentElement = document.querySelector('main');
     parentElement.insertAdjacentElement('afterbegin', domElement);
-    btnEl.addEventListener('click', function () {
+    var onBtnErrorClick = function () {
       window.location.reload();
-    });
+      btnEl.removeEventListener('click', onBtnErrorClick);
+    };
+    btnEl.addEventListener('click', onBtnErrorClick);
   };
 
   window.data = {
