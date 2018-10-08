@@ -1,14 +1,17 @@
 'use strict';
 (function () {
   var err;
+  var SUCCESSFUL_XHR_REQUEST_CODE = 200;
+  var ILL_XHR_REQUEST_CODE = 400;
+  var XHR_TIMEOUT = 10000;
 
   var getReaction = function (obj, onLoad, onError) {
     switch (obj.status) {
-      case 200:
+      case SUCCESSFUL_XHR_REQUEST_CODE:
         onLoad(obj.response);
         break;
 
-      case 400:
+      case ILL_XHR_REQUEST_CODE:
         err = 'Неверный запрос';
         break;
 
@@ -30,7 +33,7 @@
     xhr.addEventListener('timeout', function () {
       onError('Запрос не успел выполниться за ' + xhr.timeout + 'мс');
     });
-    xhr.timeout = 10000;
+    xhr.timeout = XHR_TIMEOUT;
 
     xhr.responseType = 'json';
     xhr.open('GET', 'https://js.dump.academy/keksobooking/data');
@@ -55,7 +58,7 @@
     xhr.addEventListener('timeout', function () {
       onError('Запрос не успел выполниться за ' + xhr.timeout + 'мс');
     });
-    xhr.timeout = 1000;
+    xhr.timeout = XHR_TIMEOUT;
 
     xhr.responseType = 'json';
     xhr.open('POST', 'https://js.dump.academy/keksobooking');

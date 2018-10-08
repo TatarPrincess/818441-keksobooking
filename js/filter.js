@@ -15,11 +15,10 @@
   var featuresElevator = mapEl.querySelector('#filter-elevator');
   var featuresConditioner = mapEl.querySelector('#filter-conditioner');
   var objArr = window.data.advtItems;
-  var PRICE_BOTTOM_MARGIN = 10000;
-  var PRICE_TOP_MARGIN = 50000;
   var objFeatures = ['wifi', 'dishwasher', 'parking', 'washer', 'elevator', 'conditioner'];
   var inputFeatures = [featuresWifi, featuresDishwasher, featuresParking, featuresWasher, featuresElevator, featuresConditioner];
-
+  var PRICE_BOTTOM_MARGIN = 10000;
+  var PRICE_TOP_MARGIN = 50000;
   var DEBOUNCE_INTERVAL = 500; // миллисекунды
 
   var debounce = function (fun) {
@@ -115,8 +114,6 @@
     }
 
     // удобства
-
-
     var checkedFeatures = objFeatures.filter(function (itm) {
       return Boolean(value[itm]) === true;
     });
@@ -128,10 +125,21 @@
       });
     });
 
-    window.card.hide();
+    window.card.remove();
     window.pin.clearPins();
     window.pin.drawPins(filteredBy);
   };
+
+  var featureElements = [featuresWifi, featuresDishwasher, featuresParking, featuresWasher, featuresElevator, featuresConditioner];
+  var onFeatureCheckboxClick = function (evt) {
+    if (window.util.processIfEnterEvent(evt)) {
+      evt.target.click();
+    }
+  };
+
+  featureElements.forEach(function (item) {
+    item.addEventListener('keydown', onFeatureCheckboxClick);
+  });
 
   filterForm.addEventListener('change', debounce(onFormChange));
 

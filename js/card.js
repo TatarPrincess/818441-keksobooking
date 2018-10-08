@@ -10,6 +10,8 @@
   };
   var mapEl = document.querySelector('.map');
   var articleEl;
+  var popupClose;
+  var photos;
 
   // создание элементов в DOM-дереве
 
@@ -32,12 +34,11 @@
     var parentElement = elementCard.querySelector('div');
     var template = elementCard.querySelector('div img');
     parentElement.innerHTML = '';
-    var photosArr = objectItem.offer.photos;
-    for (var n = 0; n < photosArr.length; n++) {
+    photos.forEach(function (item, i) {
       var domElement = template.cloneNode(true);
-      domElement.src = photosArr[n];
+      domElement.src = photos[i];
       parentElement.appendChild(domElement);
-    }
+    });
     return elementCard;
   };
 
@@ -48,33 +49,81 @@
     // переопределяю классы элементам склонированного куска дом-дерева
     // title
     var element = domElement.querySelector('.popup__title');
-    element.textContent = objectItem.offer.title;
+    var title = objectItem.offer.title;
+    if (title === '') {
+      element.hidden = true;
+    } else {
+      element.textContent = title;
+    }
+
     // address
     element = domElement.querySelector('.popup__text--address');
-    element.textContent = objectItem.offer.address;
+    var address = objectItem.offer.address;
+    if (address === '') {
+      element.hidden = true;
+    } else {
+      element.textContent = address;
+    }
     // price
+    var price = objectItem.offer.price;
     var elementSpan = domElement.querySelector('.popup__text--price').querySelector(':first-child');
     element = domElement.querySelector('.popup__text--price');
-    var price = new Intl.NumberFormat('ru-RU', {style: 'currency', currency: 'RUB', currencyDisplay: 'symbol'}).format(objectItem.offer.price);
-    element.textContent = price + elementSpan.textContent;
+    if (price === undefined) {
+      element.hidden = true;
+    } else {
+      var formattedPrice = new Intl.NumberFormat('ru-RU', {style: 'currency', currency: 'RUB', currencyDisplay: 'symbol'}).format(objectItem.offer.price);
+      element.textContent = formattedPrice + elementSpan.textContent;
+    }
     // type
     element = domElement.querySelector('.popup__type');
-    element.textContent = homeTypeNames[objectItem.offer.type];
+    var type = homeTypeNames[objectItem.offer.type];
+    if (type === '') {
+      element.hidden = true;
+    } else {
+      element.textContent = type;
+    }
     // capacity, guests
     element = domElement.querySelector('.popup__text--capacity');
-    element.textContent = objectItem.offer.rooms + ' комнаты для ' + objectItem.offer.guests + ' гостей';
+    var capacity = objectItem.offer.rooms;
+    if (capacity === undefined) {
+      element.hidden = true;
+    } else {
+      element.textContent = capacity + ' комнаты для ' + objectItem.offer.guests + ' гостей';
+    }
     // checkin, checkout
     element = domElement.querySelector('.popup__text--time');
-    element.textContent = 'Заезд после ' + objectItem.offer.checkin + ', выезд до ' + objectItem.offer.checkout;
+    var checkin = objectItem.offer.checkin;
+    if (checkin === '') {
+      element.hidden = true;
+    } else {
+      element.textContent = 'Заезд после ' + checkin + ', выезд до ' + objectItem.offer.checkout;
+    }
     // features
-    removeCardFeatures(objectItem, domElement);
+    var featuresEl = domElement.querySelector('.popup__features');
+    var featValues = objectItem.offer.features;
+    if (featValues.length > 0) {
+      removeCardFeatures(objectItem, domElement);
+    } else {
+      featuresEl.hidden = true;
+    }
 
     // description
     element = domElement.querySelector('.popup__description');
-    element.textContent = objectItem.offer.description;
+    var description = objectItem.offer.description;
+    if (description === '') {
+      element.hidden = true;
+    } else {
+      element.textContent = description;
+    }
 
     // photos
-    createDomElementCardImg(objectItem, domElement);
+    var photosEl = domElement.querySelector('.popup__photo');
+    photos = objectItem.offer.photos;
+    if (photos.length > 0) {
+      createDomElementCardImg(objectItem, domElement);
+    } else {
+      photosEl.hidden = true;
+    }
 
     // аватарка пользователя на карточке
     element = domElement.querySelector('.popup__avatar');
@@ -83,17 +132,25 @@
     return domElement;
   };
 
-  // скрытие карточки
-  var hideCard = function () {
-    if (articleEl) {
-      articleEl.setAttribute('hidden', 'true');
-    }
+  var onCardPopupKeydown = function (evt) {
+    evt.preventDefault();
+    window.util.processIfEnterEvent(evt, removeCard);
+
   };
-  // ОТРИСОВКА DOM-ЭЛЕМЕНТА на странице
-  var drawCard = function (objItem) {
+  var onCardPopupCloseClick = function () {
+    removeCard();
+  };
+
+  var removeCard = function () {
     if (articleEl) {
+      popupClose.removeEventListener('keydown', onCardPopupKeydown);
+      popupClose.removeEventListener('click', onCardPopupCloseClick);
       articleEl.remove();
     }
+  };
+  // отрисовка карточки
+  var drawCard = function (objItem) {
+    removeCard();
     var parentDomElementMap = document.querySelector('.map');
     var childDomElement = parentDomElementMap.querySelector('.map__filters-container');
     var fragmentMap = document.createDocumentFragment();
@@ -101,22 +158,18 @@
     fragmentMap.appendChild(domElementFinalMap);
     parentDomElementMap.insertBefore(fragmentMap, childDomElement);
     articleEl = mapEl.querySelector('article');
-    var popupClose = articleEl.querySelector('.popup__close');
-
+    popupClose = articleEl.querySelector('.popup__close');
 
     // закрытие карточки
-    var onCardPopupKeydown = function (evt) {
-      window.util.isEnterEvent(evt, hideCard());
-    };
-    var onCardPopupCloseClick = function () {
-      hideCard();
-    };
     popupClose.addEventListener('keydown', onCardPopupKeydown);
+    popupClose.addEventListener('keypress', function (evt) {
+      evt.preventDefault();
+    });
     popupClose.addEventListener('click', onCardPopupCloseClick);
   };
 
   window.card = {
     draw: drawCard,
-    hide: hideCard
+    remove: removeCard
   };
 })();

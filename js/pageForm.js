@@ -1,7 +1,7 @@
 'use strict';
 
 (function () {
-// FORM
+
   var homeTypePrice = {
     flat: 1000,
     bungalo: 0,
@@ -12,24 +12,30 @@
   var adFormEl = document.querySelector('.ad-form');
   var adFormHeaderEl = adFormEl.querySelector('.ad-form-header');
   var adFormElCollection = adFormEl.querySelectorAll('.ad-form__element');
+  var adFormElColArr = Array.from(adFormElCollection);
   var mapFiltersElCollection = mapEl.querySelectorAll('.map__filter');
+  var mapFiltersElColArr = Array.from(mapFiltersElCollection);
   var MAIN_PIN_SIZE = 156;
   var mapPinMainCoordsEl = adFormEl.querySelector('#address');
   var formHouseTypeEl = adFormEl.querySelector('#type');
   var formHouseTypeColl = formHouseTypeEl.querySelectorAll('option');
+  var formHouseTypeCollArr = Array.from(formHouseTypeColl);
   var formHouseTypePriceEl = adFormEl.querySelector('#price');
   var adFormResetEl = adFormEl.querySelector('.ad-form__reset');
   var adFormCheckInEl = adFormEl.querySelector('#timein');
   var adFormCheckInColl = adFormCheckInEl.querySelectorAll('option');
+  var adFormCheckInCollArr = Array.from(adFormCheckInColl);
   var adFormCheckOutEl = adFormEl.querySelector('#timeout');
   var adFormCheckOutColl = adFormCheckOutEl.querySelectorAll('option');
   var roomNumberEl = adFormEl.querySelector('#room_number');
   var roomNumberColl = roomNumberEl.querySelectorAll('option');
+  var roomNumberCollArr = Array.from(roomNumberColl);
   var capacityParentEl = adFormEl.querySelector('#capacity');
   var capacityCollection = adFormEl.querySelectorAll('#capacity option');
   var submitFormEl = adFormEl.querySelector('.ad-form__submit');
   var formTitle = document.querySelector('#title');
   var featureColl = adFormEl.querySelectorAll('.feature__checkbox');
+  var featureCollArr = Array.from(featureColl);
   var descriptionEl = adFormEl.querySelector('#description');
   var ROOM_CAPACITY_OBJ = {
     0: [1],
@@ -40,23 +46,21 @@
   var ROOM_NUMBER_OPTION_DEFAULT = '1';
   var CHECKIN_OPTION_DEFAULT = '12:00';
   var HOUSE_TP_OPTION_DEFAULT = 'flat';
+  var DEFAULT_AVATAR_SRC = 'img/muffin-grey.svg';
 
-  // создание элементов в DOM-дереве
   var createDomElementCapacity = function (arrEl) {
     var template = arrEl;
     var domElement = template.cloneNode(true);
     return domElement;
   };
 
-  // ОТРИСОВКА DOM-ЭЛЕМЕНТА на странице
-
   // capacity
   var addCapacityOptions = function (arr) {
     var fragment = document.createDocumentFragment();
-    for (var p = 0; p < arr.length; p++) {
-      var domElementFinal = createDomElementCapacity(arr[p]);
+    arr.forEach(function (item, i) {
+      var domElementFinal = createDomElementCapacity(arr[i]);
       fragment.appendChild(domElementFinal);
-    }
+    });
     capacityParentEl.appendChild(fragment);
   };
 
@@ -69,21 +73,20 @@
     return mapPinMainCoordsEl.value;
   };
 
-  var fillArr = function (idx, obj) {
+  var fillArr = function (idx) {
     var capacityEls = [];
-    var arrIdxSelCapacity = obj[idx];
-
-    for (var o = 0; o < arrIdxSelCapacity.length; o++) {
-      var arrItemValue = arrIdxSelCapacity[o];
-      capacityEls[o] = capacityCollection[arrItemValue];
-    }
+    var arrIdxSelCapacity = ROOM_CAPACITY_OBJ[idx];
+    arrIdxSelCapacity.forEach(function (item, i) {
+      var arrItemValue = arrIdxSelCapacity[i];
+      capacityEls[i] = capacityCollection[arrItemValue];
+    });
     return capacityEls;
 
   };
 
   var setCapacityElOption = function (optionIndex) {
     capacityParentEl.innerHTML = '';
-    var capacityEls = fillArr(optionIndex, ROOM_CAPACITY_OBJ);
+    var capacityEls = fillArr(optionIndex);
     addCapacityOptions(capacityEls);
     return adFormEl.querySelector('#capacity');
   };
@@ -91,33 +94,42 @@
   var changeFormOnPageActivate = function () {
     adFormEl.classList.remove('ad-form--disabled');
     adFormHeaderEl.removeAttribute('disabled');
-    for (var d = 0; d < adFormElCollection.length; d++) {
-      adFormElCollection[d].removeAttribute('disabled');
-    }
-    for (var t = 0; t < mapFiltersElCollection.length; t++) {
-      mapFiltersElCollection[t].removeAttribute('disabled');
-    }
+    adFormElColArr.forEach(function (item, i) {
+      adFormElColArr[i].removeAttribute('disabled');
+    });
+    mapFiltersElColArr.forEach(function (item, i) {
+      mapFiltersElColArr[i].removeAttribute('disabled');
+    });
     // pricePlaceHolder changing
     formHouseTypeEl.addEventListener('change', onSelectOptionChange);
   };
 
+  var clearPreviewPhotos = function () {
+    var previewContainer = adFormEl.querySelector('.ad-form__photo');
+    var preview = adFormEl.querySelector('.ad-form-header__preview img');
+    while (previewContainer.firstChild) {
+      previewContainer.removeChild(previewContainer.firstChild);
+    }
+    preview.src = DEFAULT_AVATAR_SRC;
+  };
+
   var changeFormOnPageDeactivate = function () {
     adFormEl.classList.add('ad-form--disabled');
-    adFormHeaderEl.setAttribute('disabled', 'disabled');
+    adFormHeaderEl.disabled = true;
     formTitle.value = '';
-    for (var d = 0; d < adFormElCollection.length; d++) {
-      adFormElCollection[d].setAttribute('disabled', 'disabled');
-    }
-    for (var t = 0; t < mapFiltersElCollection.length; t++) {
-      mapFiltersElCollection[t].setAttribute('disabled', 'disabled');
-    }
+    adFormElColArr.forEach(function (item, i) {
+      adFormElColArr[i].disabled = true;
+    });
+    mapFiltersElColArr.forEach(function (item, i) {
+      mapFiltersElColArr[i].disabled = true;
+    });
+    clearPreviewPhotos();
     formHouseTypeEl.removeEventListener('change', onSelectOptionChange);
   };
 
-  // HANDLERS
   var onSelectOptionChange = function () {
-    formHouseTypePriceEl.setAttribute('placeholder', homeTypePrice[formHouseTypeEl.value]);
-    formHouseTypePriceEl.setAttribute('min', homeTypePrice[formHouseTypeEl.value]);
+    formHouseTypePriceEl.placeholder = homeTypePrice[formHouseTypeEl.value];
+    formHouseTypePriceEl.min = homeTypePrice[formHouseTypeEl.value];
   };
 
   // ДОБАВЛЯЕМ СОБЫТИЯ
@@ -135,28 +147,28 @@
     pageDeactivate(true);
   });
   // choosing checkIn
-  adFormCheckInEl.addEventListener('change', function () {
+  var onCheckInSelectChange = function () {
     if (adFormCheckOutEl.selectedIndex !== -1) {
       adFormCheckOutEl.selectedIndex = adFormCheckInEl.selectedIndex;
     }
-  });
+  };
+  adFormCheckInEl.addEventListener('change', onCheckInSelectChange);
   // capacity
-  roomNumberEl.addEventListener('change', function () {
+  var onRoomNumberSelectChange = function () {
     setCapacityElOption(roomNumberEl.selectedIndex);
-  });
+  };
+  roomNumberEl.addEventListener('change', onRoomNumberSelectChange);
 
 
   // PAGE
   var onPageFirstLoad = function () {
     pageDeactivate(false);
-    window.backend.load(window.data.onLoad, window.data.onError);
   };
 
   var pageActivate = function () {
     mapEl.classList.remove('map--faded');
-    // window.backend.load(window.data.onLoad, window.data.onError);
-    window.pin.drawPins();
     changeFormOnPageActivate();
+    window.backend.load(window.data.onLoad, window.data.onError);
   };
 
   var pageDeactivate = function (isReset) {
@@ -166,7 +178,7 @@
     changeFormOnPageDeactivate();
     if (isReset) {
       window.filter.resetFilterForm();
-      window.card.hide();
+      window.card.remove();
       window.pin.hidePins();
     }
     document.removeEventListener('DOMContentLoaded', onPageFirstLoad);
@@ -181,36 +193,58 @@
     formTitle.value = '';
     formHouseTypePriceEl.value = '';
     setAddrCoords();
-    for (var k = 0; k < formHouseTypeColl.length; k++) {
-      if (formHouseTypeColl[k].value === HOUSE_TP_OPTION_DEFAULT) {
-        setElAttr(formHouseTypeColl[k]);
+    formHouseTypeCollArr.forEach(function (item, i) {
+      if (item.value === HOUSE_TP_OPTION_DEFAULT) {
+        setElAttr(formHouseTypeCollArr[i]);
       }
-    }
-    for (var l = 0; l < adFormCheckInColl.length; l++) {
-      if (adFormCheckInColl[l].value === CHECKIN_OPTION_DEFAULT) {
-        setElAttr(adFormCheckInColl[l]);
-        setElAttr(adFormCheckOutColl[l]);
+    });
+    adFormCheckInCollArr.forEach(function (item, i) {
+      if (item.value === CHECKIN_OPTION_DEFAULT) {
+        setElAttr(adFormCheckInCollArr[i]);
+        setElAttr(adFormCheckOutColl[i]);
       }
-    }
-    for (var m = 0; m < roomNumberColl.length; m++) {
-      if (roomNumberColl[m].value === ROOM_NUMBER_OPTION_DEFAULT) {
-        setElAttr(roomNumberColl[m]);
+    });
+    roomNumberCollArr.forEach(function (item, i) {
+      if (item.value === ROOM_NUMBER_OPTION_DEFAULT) {
+        setElAttr(roomNumberCollArr[i]);
         setCapacityElOption(roomNumberEl.selectedIndex);
       }
-    }
-    for (var i = 0; i < featureColl.length; i++) {
-      featureColl[i].checked = false;
-    }
+    });
+    featureCollArr.forEach(function (item, i) {
+      featureCollArr[i].checked = false;
+    });
+
+    clearPreviewPhotos();
     descriptionEl.value = '';
     window.pin.restylePin();
   };
 
   var onLoad = function () {
     changeFormOnSubmit();
+    var template = document.querySelector('#success').content.querySelector('.success');
+    var domElement = template.cloneNode(true);
+    var parentElement = document.querySelector('main');
+    parentElement.insertAdjacentElement('afterbegin', domElement);
+
+    var onSuccessSubmitClick = function () {
+      var successBtnClick = document.querySelector('.success');
+      if (successBtnClick) {
+        successBtnClick.remove();
+        document.removeEventListener('click', onSuccessSubmitClick);
+      }
+      document.removeEventListener('keydown', onSuccessSubmitKeydown);
+    };
+
+    var onSuccessSubmitKeydown = function (evt) {
+      window.util.processIfEscEvent(evt, onSuccessSubmitClick);
+    };
+
+    document.addEventListener('click', onSuccessSubmitClick);
+    document.addEventListener('keydown', onSuccessSubmitKeydown);
   };
 
-  // события
   document.addEventListener('DOMContentLoaded', onPageFirstLoad);
+
   submitFormEl.addEventListener('click', function (evt) {
     evt.preventDefault();
     window.backend.save(new FormData(adFormEl), onLoad, window.data.onError);
