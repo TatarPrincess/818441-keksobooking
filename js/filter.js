@@ -130,6 +130,17 @@
     window.pin.drawPins(filteredBy);
   };
 
+  var featureElements = [featuresWifi, featuresDishwasher, featuresParking, featuresWasher, featuresElevator, featuresConditioner];
+  var onFeatureCheckboxClick = function (evt) {
+    if (window.util.processIfEnterEvent(evt)) {
+      evt.target.click();
+    }
+  };
+
+  featureElements.forEach(function (item) {
+    item.addEventListener('keydown', onFeatureCheckboxClick);
+  });
+
   filterForm.addEventListener('change', debounce(onFormChange));
 
   window.filter = {

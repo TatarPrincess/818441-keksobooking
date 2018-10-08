@@ -115,23 +115,21 @@
 
   var changeFormOnPageDeactivate = function () {
     adFormEl.classList.add('ad-form--disabled');
-    adFormHeaderEl.setAttribute('disabled', 'disabled');
+    adFormHeaderEl.disabled = true;
     formTitle.value = '';
     adFormElColArr.forEach(function (item, i) {
-      adFormElColArr[i].setAttribute('disabled', 'disabled');
+      adFormElColArr[i].disabled = true;
     });
     mapFiltersElColArr.forEach(function (item, i) {
-      mapFiltersElColArr[i].setAttribute('disabled', 'disabled');
+      mapFiltersElColArr[i].disabled = true;
     });
     clearPreviewPhotos();
     formHouseTypeEl.removeEventListener('change', onSelectOptionChange);
-    adFormCheckInEl.removeEventListener('change', onCheckInSelectChange);
-    roomNumberEl.removeEventListener('change', onRoomNumberSelectChange);
   };
 
   var onSelectOptionChange = function () {
-    formHouseTypePriceEl.setAttribute('placeholder', homeTypePrice[formHouseTypeEl.value]);
-    formHouseTypePriceEl.setAttribute('min', homeTypePrice[formHouseTypeEl.value]);
+    formHouseTypePriceEl.placeholder = homeTypePrice[formHouseTypeEl.value];
+    formHouseTypePriceEl.min = homeTypePrice[formHouseTypeEl.value];
   };
 
   // ДОБАВЛЯЕМ СОБЫТИЯ
@@ -238,7 +236,7 @@
     };
 
     var onSuccessSubmitKeydown = function (evt) {
-      window.util.isEscEvent(evt, onSuccessSubmitClick);
+      window.util.processIfEscEvent(evt, onSuccessSubmitClick);
     };
 
     document.addEventListener('click', onSuccessSubmitClick);

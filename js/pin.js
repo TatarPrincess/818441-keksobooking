@@ -23,6 +23,14 @@
     element.alt = objectItem.offer.title;
 
     domElement.addEventListener('click', function () {
+      pinDomElCollArr = Array.from(pinDomElCollection);
+      pinDomElCollArr.forEach(function (item) {
+        if (item.classList.contains('map__pin--active')) {
+          item.classList.remove('map__pin--active');
+        }
+      });
+      domElement.classList.add('map__pin--active');
+
       window.card.draw(objectItem);
     });
 
@@ -55,7 +63,7 @@
   var hidePins = function () {
     pinDomElCollArr = Array.from(pinDomElCollection);
     pinDomElCollArr.forEach(function (item, i) {
-      pinDomElCollArr[i].setAttribute('hidden', 'true');
+      pinDomElCollArr[i].hidden = true;
     });
   };
 

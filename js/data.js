@@ -15,7 +15,7 @@
 
   var onLoad = function (response) {
     // создание массива объектов карточек
-    for (var i = 0; i <= 7; i++) {
+    for (var i = 0; i <= 5; i++) {
       var dataArrItem = getRandomArrIndex(response);
       advtItems[i] = {
         author: {

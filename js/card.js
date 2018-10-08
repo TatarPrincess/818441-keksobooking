@@ -11,6 +11,7 @@
   var mapEl = document.querySelector('.map');
   var articleEl;
   var popupClose;
+  var photos;
 
   // создание элементов в DOM-дереве
 
@@ -33,10 +34,9 @@
     var parentElement = elementCard.querySelector('div');
     var template = elementCard.querySelector('div img');
     parentElement.innerHTML = '';
-    var photosArr = objectItem.offer.photos;
-    photosArr.forEach(function (item, i) {
+    photos.forEach(function (item, i) {
       var domElement = template.cloneNode(true);
-      domElement.src = photosArr[i];
+      domElement.src = photos[i];
       parentElement.appendChild(domElement);
     });
     return elementCard;
@@ -49,33 +49,81 @@
     // переопределяю классы элементам склонированного куска дом-дерева
     // title
     var element = domElement.querySelector('.popup__title');
-    element.textContent = objectItem.offer.title;
+    var title = objectItem.offer.title;
+    if (title === '') {
+      element.hidden = true;
+    } else {
+      element.textContent = title;
+    }
+
     // address
     element = domElement.querySelector('.popup__text--address');
-    element.textContent = objectItem.offer.address;
+    var address = objectItem.offer.address;
+    if (address === '') {
+      element.hidden = true;
+    } else {
+      element.textContent = address;
+    }
     // price
+    var price = objectItem.offer.price;
     var elementSpan = domElement.querySelector('.popup__text--price').querySelector(':first-child');
     element = domElement.querySelector('.popup__text--price');
-    var price = new Intl.NumberFormat('ru-RU', {style: 'currency', currency: 'RUB', currencyDisplay: 'symbol'}).format(objectItem.offer.price);
-    element.textContent = price + elementSpan.textContent;
+    if (price === undefined) {
+      element.hidden = true;
+    } else {
+      var formattedPrice = new Intl.NumberFormat('ru-RU', {style: 'currency', currency: 'RUB', currencyDisplay: 'symbol'}).format(objectItem.offer.price);
+      element.textContent = formattedPrice + elementSpan.textContent;
+    }
     // type
     element = domElement.querySelector('.popup__type');
-    element.textContent = homeTypeNames[objectItem.offer.type];
+    var type = homeTypeNames[objectItem.offer.type];
+    if (type === '') {
+      element.hidden = true;
+    } else {
+      element.textContent = type;
+    }
     // capacity, guests
     element = domElement.querySelector('.popup__text--capacity');
-    element.textContent = objectItem.offer.rooms + ' комнаты для ' + objectItem.offer.guests + ' гостей';
+    var capacity = objectItem.offer.rooms;
+    if (capacity === undefined) {
+      element.hidden = true;
+    } else {
+      element.textContent = capacity + ' комнаты для ' + objectItem.offer.guests + ' гостей';
+    }
     // checkin, checkout
     element = domElement.querySelector('.popup__text--time');
-    element.textContent = 'Заезд после ' + objectItem.offer.checkin + ', выезд до ' + objectItem.offer.checkout;
+    var checkin = objectItem.offer.checkin;
+    if (checkin === '') {
+      element.hidden = true;
+    } else {
+      element.textContent = 'Заезд после ' + checkin + ', выезд до ' + objectItem.offer.checkout;
+    }
     // features
-    removeCardFeatures(objectItem, domElement);
+    var featuresEl = domElement.querySelector('.popup__features');
+    var featValues = objectItem.offer.features;
+    if (featValues.length > 0) {
+      removeCardFeatures(objectItem, domElement);
+    } else {
+      featuresEl.hidden = true;
+    }
 
     // description
     element = domElement.querySelector('.popup__description');
-    element.textContent = objectItem.offer.description;
+    var description = objectItem.offer.description;
+    if (description === '') {
+      element.hidden = true;
+    } else {
+      element.textContent = description;
+    }
 
     // photos
-    createDomElementCardImg(objectItem, domElement);
+    var photosEl = domElement.querySelector('.popup__photo');
+    photos = objectItem.offer.photos;
+    if (photos.length > 0) {
+      createDomElementCardImg(objectItem, domElement);
+    } else {
+      photosEl.hidden = true;
+    }
 
     // аватарка пользователя на карточке
     element = domElement.querySelector('.popup__avatar');
@@ -85,7 +133,9 @@
   };
 
   var onCardPopupKeydown = function (evt) {
-    window.util.isEnterEvent(evt, removeCard);
+    evt.preventDefault();
+    window.util.processIfEnterEvent(evt, removeCard);
+
   };
   var onCardPopupCloseClick = function () {
     removeCard();
@@ -112,6 +162,9 @@
 
     // закрытие карточки
     popupClose.addEventListener('keydown', onCardPopupKeydown);
+    popupClose.addEventListener('keypress', function (evt) {
+      evt.preventDefault();
+    });
     popupClose.addEventListener('click', onCardPopupCloseClick);
   };
 
