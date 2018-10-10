@@ -1,10 +1,22 @@
 'use strict';
 (function () {
-  var err;
   var SUCCESSFUL_XHR_REQUEST_CODE = 200;
   var ILL_XHR_REQUEST_CODE = 400;
   var XHR_TIMEOUT = 10000;
+  var err;
+  var xhr;
 
+  var setXhrAndHandleReqErr = function (onError) {
+    xhr = new XMLHttpRequest();
+    xhr.addEventListener('error', function () {
+      onError('Произошла ошибка соединения');
+    });
+    xhr.addEventListener('timeout', function () {
+      onError('Запрос не успел выполниться за ' + xhr.timeout + 'мс');
+    });
+    xhr.timeout = XHR_TIMEOUT;
+    return xhr;
+  };
   var getReaction = function (obj, onLoad, onError) {
     switch (obj.status) {
       case SUCCESSFUL_XHR_REQUEST_CODE:
@@ -25,16 +37,8 @@
   };
 
   var load = function (onLoad, onError) {
-    var xhr = new XMLHttpRequest();
 
-    xhr.addEventListener('error', function () {
-      onError('Произошла ошибка соединения');
-    });
-    xhr.addEventListener('timeout', function () {
-      onError('Запрос не успел выполниться за ' + xhr.timeout + 'мс');
-    });
-    xhr.timeout = XHR_TIMEOUT;
-
+    setXhrAndHandleReqErr(onError);
     xhr.responseType = 'json';
     xhr.open('GET', 'https://js.dump.academy/keksobooking/data');
 
@@ -50,16 +54,8 @@
   };
 
   var save = function (data, onLoad, onError) {
-    var xhr = new XMLHttpRequest();
 
-    xhr.addEventListener('error', function () {
-      onError('Произошла ошибка соединения');
-    });
-    xhr.addEventListener('timeout', function () {
-      onError('Запрос не успел выполниться за ' + xhr.timeout + 'мс');
-    });
-    xhr.timeout = XHR_TIMEOUT;
-
+    setXhrAndHandleReqErr(onError);
     xhr.responseType = 'json';
     xhr.open('POST', 'https://js.dump.academy/keksobooking');
 

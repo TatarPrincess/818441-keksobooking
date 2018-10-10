@@ -1,12 +1,16 @@
 'use strict';
 
 (function () {
-  var mapEl = window.filter.mapEl;
-  var mapPinMain = document.querySelector('.map__pin--main');
+  var MIN_TOP_COORDINATE = 130;
+  var MAX_BOTTOM_COORDINATE = 630;
+  var mapEl = window.card.mapEl;
+  var mapPinMainEl = window.pin.mainEl;
 
   // ДОБАВЛЯЕМ СОБЫТИЯ
-  mapPinMain.addEventListener('mousedown', function (evt) {
+  mapPinMainEl.addEventListener('mousedown', function (evt) {
   // запоминаем первые стартовые координаты после нажатия мыши
+    var dragged = false;
+
     var startCoords = {
       x: evt.clientX,
       y: evt.clientY
@@ -14,28 +18,29 @@
     // функция обновляет стили перетаскивааемому элементу и обновляет адрес на форме
     var renewCoordsAddress = function (newX, newY) {
       var result = newX ? window.pageForm.setAddrCoords(newX, newY) : window.pageForm.setAddrCoords();
-      window.pin.restylePin(newX, newY);
+      window.pin.restyle(newX, newY);
       return result;
     };
-    var dragged = false;
 
     var getNewCoords = function (obj) {
     // накладываем границы перетаскивания на вычисленные новые координаты
       var applyLimits = function (rawNewCoordsObj) {
         var limits = {
-          top: mapPinMain.offsetHeight,
-          right: mapEl.offsetWidth - mapPinMain.offsetWidth,
-          bottom: mapEl.offsetHeight - mapPinMain.offsetHeight,
+          top: MIN_TOP_COORDINATE,
+          right: mapEl.offsetWidth - mapPinMainEl.offsetWidth,
+          bottom: MAX_BOTTOM_COORDINATE,
           left: 1
         };
         if (rawNewCoordsObj.x > limits.right) {
           rawNewCoordsObj.x = limits.right;
-        } else if (rawNewCoordsObj.x < limits.left) {
+        }
+        if (rawNewCoordsObj.x < limits.left) {
           rawNewCoordsObj.x = limits.left;
         }
         if (rawNewCoordsObj.y > limits.bottom) {
           rawNewCoordsObj.y = limits.bottom;
-        } else if (rawNewCoordsObj.y < limits.top) {
+        }
+        if (rawNewCoordsObj.y < limits.top) {
           rawNewCoordsObj.y = limits.top;
         }
         return rawNewCoordsObj;
@@ -51,12 +56,12 @@
         y: obj.clientY
       };
 
-      var newMapPinCoords = {
-        x: mapPinMain.offsetLeft - shift.x,
-        y: mapPinMain.offsetTop - shift.y
+      var NewMapPinCoords = {
+        x: mapPinMainEl.offsetLeft - shift.x,
+        y: mapPinMainEl.offsetTop - shift.y
       };
-      applyLimits(newMapPinCoords);
-      renewCoordsAddress(newMapPinCoords.x, newMapPinCoords.y);
+      applyLimits(NewMapPinCoords);
+      renewCoordsAddress(NewMapPinCoords.x, NewMapPinCoords.y);
     };
 
     var onMouseMove = function (moveEvt) {
@@ -65,7 +70,7 @@
     };
     var onMouseUp = function (upEvt) {
       if (dragged) {
-        window.pageForm.pageActivate();
+        window.pageForm.activate();
       } else {
         getNewCoords(upEvt);
       }

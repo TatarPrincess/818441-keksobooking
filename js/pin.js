@@ -1,85 +1,86 @@
 'use strict';
 
 (function () {
-  var mapPinMain = document.querySelector('.map__pin--main');
-  var mainPinX = mapPinMain.style.left;
-  var mainPinY = mapPinMain.style.top;
-  var pinDomElCollection;
-  var pinDomElCollArr;
+  var mapPinMainEl = document.querySelector('.map__pin--main');
+  var mainPinX = mapPinMainEl.style.left;
+  var mainPinY = mapPinMainEl.style.top;
+  var pinElCollection;
+  var pinElCollArr;
 
   // создаем dom-элемент пина
   var createDomElementPin = function (objectItem) {
 
     var template = document.querySelector('#pin').content.querySelector('button');
-    var domElement = template.cloneNode(true);
-    var pinHeigth = domElement.querySelector('img').height;
-    var pinWidth = domElement.querySelector('img').width;
+    var domEl = template.cloneNode(true);
+    var pinHeigth = domEl.querySelector('img').height;
+    var pinWidth = domEl.querySelector('img').width;
 
-    domElement.style.left = (objectItem.advItemLocation.x - pinWidth) + 'px';
-    domElement.style.top = (objectItem.advItemLocation.y - pinHeigth) + 'px';
+    domEl.style.left = (objectItem.location.x - pinWidth) + 'px';
+    domEl.style.top = (objectItem.location.y - pinHeigth) + 'px';
 
-    var element = domElement.querySelector(':first-child');
-    element.src = objectItem.author.avatar;
-    element.alt = objectItem.offer.title;
+    var el = domEl.querySelector(':first-child');
+    el.src = objectItem.author.avatar;
+    el.alt = objectItem.offer.title;
 
-    domElement.addEventListener('click', function () {
-      pinDomElCollArr = Array.from(pinDomElCollection);
-      pinDomElCollArr.forEach(function (item) {
+    domEl.addEventListener('click', function () {
+      pinElCollArr = Array.from(pinElCollection);
+      pinElCollArr.forEach(function (item) {
         if (item.classList.contains('map__pin--active')) {
           item.classList.remove('map__pin--active');
         }
       });
-      domElement.classList.add('map__pin--active');
+      domEl.classList.add('map__pin--active');
 
       window.card.draw(objectItem);
     });
 
-    return domElement;
+    return domEl;
   };
 
   var restylePin = function (x, y) {
-    mapPinMain.style.left = mainPinX;
-    mapPinMain.style.top = mainPinY;
+    mapPinMainEl.style.left = mainPinX;
+    mapPinMainEl.style.top = mainPinY;
     if (x) {
-      mapPinMain.style.left = x + 'px';
-      mapPinMain.style.top = y + 'px';
+      mapPinMainEl.style.left = x + 'px';
+      mapPinMainEl.style.top = y + 'px';
     }
   };
 
   // отрисовываем dom-элемент пина
-  var pinParentDomEl = document.querySelector('.map__pins');
+  var pinParentEl = document.querySelector('.map__pins');
   var drawPins = function (array) {
     var arrayToDraw = (array) ? array : window.data.advtItems;
     var fragment = document.createDocumentFragment();
     arrayToDraw.forEach(function (item, i) {
-      var domElementFinal = createDomElementPin(arrayToDraw[i]);
-      fragment.appendChild(domElementFinal);
+      var pinElementFinal = createDomElementPin(arrayToDraw[i]);
+      fragment.appendChild(pinElementFinal);
     });
-    pinParentDomEl.appendChild(fragment);
-    pinDomElCollection = document.querySelectorAll('.map__pin:not(.map__pin--main)');
+    pinParentEl.appendChild(fragment);
+    pinElCollection = document.querySelectorAll('.map__pin:not(.map__pin--main)');
   };
 
   // скрытие и удаление dom-элемента пина
   var hidePins = function () {
-    pinDomElCollArr = Array.from(pinDomElCollection);
-    pinDomElCollArr.forEach(function (item, i) {
-      pinDomElCollArr[i].hidden = true;
+    pinElCollArr = Array.from(pinElCollection);
+    pinElCollArr.forEach(function (item, i) {
+      pinElCollArr[i].hidden = true;
     });
   };
 
   var clearPins = function () {
-    pinDomElCollArr = Array.from(pinDomElCollection);
-    pinDomElCollArr.forEach(function (item, i) {
-      pinDomElCollArr[i].remove();
+    pinElCollArr = Array.from(pinElCollection);
+    pinElCollArr.forEach(function (item, i) {
+      pinElCollArr[i].remove();
     });
   };
   // экспорт в глобальную область видимости
   window.pin = {
-    drawPins: drawPins,
-    hidePins: hidePins,
-    restylePin: restylePin,
-    clearPins: clearPins,
-    mainPinX: mainPinX,
-    mainPinY: mainPinY
+    draw: drawPins,
+    hide: hidePins,
+    restyle: restylePin,
+    clear: clearPins,
+    mainX: mainPinX,
+    mainY: mainPinY,
+    mainEl: mapPinMainEl
   };
 })();
