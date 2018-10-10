@@ -10,23 +10,27 @@
   };
   var mapEl = document.querySelector('.map');
   var articleEl;
-  var popupClose;
+  var popupCloseEl;
   var photos;
+  var domEl;
 
   // создание элементов в DOM-дереве
 
-  var removeCardFeatures = function (objectItem, elementCard) {
-    var objArrLength = objectItem.offer.features.length;
+  var removeCardFeatures = function (objectItem, cardEl) {
+    var objArr = objectItem.offer.features;
+    var objArrLength = objArr.length;
     var initArrLength = features.length;
-    var parentEl = elementCard.querySelector('ul');
+    var parentEl = cardEl.querySelector('ul');
     if (initArrLength - objArrLength) {
-      for (var m = objArrLength; m < initArrLength; m++) {
-        var elToRemove = elementCard.querySelector('li[class$="' + features[m] + '"]');
-        parentEl = elementCard.querySelector('ul');
-        parentEl.removeChild(elToRemove);
+      for (var m = 0; m < initArrLength; m++) {
+        if (!objArr.includes(features[m])) {
+          var toRemoveEl = cardEl.querySelector('li[class$="' + features[m] + '"]');
+          parentEl = cardEl.querySelector('ul');
+          parentEl.removeChild(toRemoveEl);
+        }
       }
     }
-    return elementCard;
+    return cardEl;
   };
 
 
@@ -42,134 +46,108 @@
     return elementCard;
   };
 
+  var setTextContent = function (element, content) {
+    if (!content) {
+      element.hidden = true;
+    } else {
+      element.textContent = content;
+    }
+  };
+
   var createDomElementCard = function (objectItem) {
   // клонирую всю карточку
     var template = document.querySelector('#card').content.querySelector('article');
-    var domElement = template.cloneNode(true);
-    // переопределяю классы элементам склонированного куска дом-дерева
-    // title
-    var element = domElement.querySelector('.popup__title');
-    var title = objectItem.offer.title;
-    if (title === '') {
-      element.hidden = true;
-    } else {
-      element.textContent = title;
-    }
+    domEl = template.cloneNode(true);
 
-    // address
-    element = domElement.querySelector('.popup__text--address');
-    var address = objectItem.offer.address;
-    if (address === '') {
-      element.hidden = true;
-    } else {
-      element.textContent = address;
-    }
-    // price
-    var price = objectItem.offer.price;
-    var elementSpan = domElement.querySelector('.popup__text--price').querySelector(':first-child');
-    element = domElement.querySelector('.popup__text--price');
-    if (price === undefined) {
-      element.hidden = true;
-    } else {
-      var formattedPrice = new Intl.NumberFormat('ru-RU', {style: 'currency', currency: 'RUB', currencyDisplay: 'symbol'}).format(objectItem.offer.price);
-      element.textContent = formattedPrice + elementSpan.textContent;
-    }
-    // type
-    element = domElement.querySelector('.popup__type');
-    var type = homeTypeNames[objectItem.offer.type];
-    if (type === '') {
-      element.hidden = true;
-    } else {
-      element.textContent = type;
-    }
-    // capacity, guests
-    element = domElement.querySelector('.popup__text--capacity');
-    var capacity = objectItem.offer.rooms;
-    if (capacity === undefined) {
-      element.hidden = true;
-    } else {
-      element.textContent = capacity + ' комнаты для ' + objectItem.offer.guests + ' гостей';
-    }
-    // checkin, checkout
-    element = domElement.querySelector('.popup__text--time');
-    var checkin = objectItem.offer.checkin;
-    if (checkin === '') {
-      element.hidden = true;
-    } else {
-      element.textContent = 'Заезд после ' + checkin + ', выезд до ' + objectItem.offer.checkout;
+    var spanEl = domEl.querySelector('.popup__text--price').querySelector(':first-child');
+    var formattedPrice = new Intl.NumberFormat('ru-RU', {style: 'currency', currency: 'RUB', currencyDisplay: 'symbol'}).format(objectItem.offer.price);
+    // переопределяю классы элементам склонированного куска дом-дерева
+
+    var mapaDomEl = {
+      title: domEl.querySelector('.popup__title'),
+      address: domEl.querySelector('.popup__text--address'),
+      price: domEl.querySelector('.popup__text--price'),
+      type: domEl.querySelector('.popup__type'),
+      capacity: domEl.querySelector('.popup__text--capacity'),
+      checkin: domEl.querySelector('.popup__text--time'),
+      description: domEl.querySelector('.popup__description')
+    };
+
+    var mapaContent = {
+      title: objectItem.offer.title,
+      address: objectItem.offer.address,
+      price: formattedPrice + spanEl.textContent,
+      type: homeTypeNames[objectItem.offer.type],
+      capacity: (objectItem.offer.rooms) ? objectItem.offer.rooms + ' комнаты для ' + objectItem.offer.guests + ' гостей' : '',
+      checkin: 'Заезд после ' + objectItem.offer.checkin + ', выезд до ' + objectItem.offer.checkout,
+      description: objectItem.offer.description
+    };
+
+    for (var key in mapaDomEl) {
+      if (key) {
+        var content = mapaContent[key];
+        setTextContent(mapaDomEl[key], content);
+      }
     }
     // features
-    var featuresEl = domElement.querySelector('.popup__features');
+    var featuresEl = domEl.querySelector('.popup__features');
     var featValues = objectItem.offer.features;
     if (featValues.length > 0) {
-      removeCardFeatures(objectItem, domElement);
+      removeCardFeatures(objectItem, domEl);
     } else {
       featuresEl.hidden = true;
     }
 
-    // description
-    element = domElement.querySelector('.popup__description');
-    var description = objectItem.offer.description;
-    if (description === '') {
-      element.hidden = true;
-    } else {
-      element.textContent = description;
-    }
-
     // photos
-    var photosEl = domElement.querySelector('.popup__photo');
+    var photosEl = domEl.querySelector('.popup__photo');
     photos = objectItem.offer.photos;
     if (photos.length > 0) {
-      createDomElementCardImg(objectItem, domElement);
+      createDomElementCardImg(objectItem, domEl);
     } else {
       photosEl.hidden = true;
     }
 
-    // аватарка пользователя на карточке
-    element = domElement.querySelector('.popup__avatar');
-    element.src = objectItem.author.avatar;
+    // avatar
+    var el = domEl.querySelector('.popup__avatar');
+    el.src = objectItem.author.avatar;
 
-    return domElement;
+    return domEl;
   };
 
   var onCardPopupKeydown = function (evt) {
-    evt.preventDefault();
-    window.util.processIfEnterEvent(evt, removeCard);
-
+    window.util.processIfEscEvent(evt, removeCard);
   };
+
   var onCardPopupCloseClick = function () {
     removeCard();
   };
 
   var removeCard = function () {
     if (articleEl) {
-      popupClose.removeEventListener('keydown', onCardPopupKeydown);
-      popupClose.removeEventListener('click', onCardPopupCloseClick);
       articleEl.remove();
+      popupCloseEl.removeEventListener('click', onCardPopupCloseClick);
+      document.removeEventListener('keydown', onCardPopupKeydown);
     }
   };
   // отрисовка карточки
   var drawCard = function (objItem) {
     removeCard();
-    var parentDomElementMap = document.querySelector('.map');
-    var childDomElement = parentDomElementMap.querySelector('.map__filters-container');
+    var childEl = mapEl.querySelector('.map__filters-container');
     var fragmentMap = document.createDocumentFragment();
-    var domElementFinalMap = createDomElementCard(objItem);
-    fragmentMap.appendChild(domElementFinalMap);
-    parentDomElementMap.insertBefore(fragmentMap, childDomElement);
+    var mapElementFinal = createDomElementCard(objItem);
+    fragmentMap.appendChild(mapElementFinal);
+    mapEl.insertBefore(fragmentMap, childEl);
     articleEl = mapEl.querySelector('article');
-    popupClose = articleEl.querySelector('.popup__close');
+    popupCloseEl = articleEl.querySelector('.popup__close');
 
     // закрытие карточки
-    popupClose.addEventListener('keydown', onCardPopupKeydown);
-    popupClose.addEventListener('keypress', function (evt) {
-      evt.preventDefault();
-    });
-    popupClose.addEventListener('click', onCardPopupCloseClick);
+    document.addEventListener('keydown', onCardPopupKeydown);
+    popupCloseEl.addEventListener('click', onCardPopupCloseClick);
   };
 
   window.card = {
     draw: drawCard,
-    remove: removeCard
+    remove: removeCard,
+    mapEl: mapEl
   };
 })();
