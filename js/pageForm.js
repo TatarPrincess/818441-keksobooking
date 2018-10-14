@@ -96,8 +96,12 @@
     capacityParentEl.appendChild(fragment);
   };
 
+  var getRidOfLetters = function (str) {
+    var result = Number(str.replace(/\D+/g, ''));
+    return result;
+  };
   var setAddrCoords = function (coordX, coordY) {
-    var defaultCoords = Number(window.pin.mainX.replace(/\D+/g, '')) + ',' + Number(window.pin.mainY.replace(/\D+/g, ''));
+    var defaultCoords = getRidOfLetters(window.pin.mainX) + ',' + getRidOfLetters(window.pin.mainY);
     var mainPinCoords = coordX + ', ' + coordY;
     // проставляем в input address value переданных координат
     mapPinMainCoordsEl.value = coordX ? mainPinCoords : defaultCoords;

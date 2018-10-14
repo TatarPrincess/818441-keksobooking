@@ -6,7 +6,7 @@
 
   var onLoad = function (response) {
     // создание массива объектов карточек
-    [].forEach.call(response, function (item, i) {
+    response.forEach(function (item, i) {
       advtItems[i] = {
         author: {
           avatar: item.author.avatar
