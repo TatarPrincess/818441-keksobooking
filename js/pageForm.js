@@ -47,6 +47,8 @@
   var featureElCollection = adFormEl.querySelectorAll('.feature__checkbox');
   var featureCollArr = Array.from(featureElCollection);
   var descriptionEl = adFormEl.querySelector('#description');
+  var previewContainer = adFormEl.querySelector('.ad-form__photo');
+  var preview = adFormEl.querySelector('.ad-form-header__preview img');
 
   // PAGE
 
@@ -95,8 +97,8 @@
   };
 
   var setAddrCoords = function (coordX, coordY) {
-    var defaultCoords = window.pin.mainX + ',' + window.pin.mainY;
-    var mainPinCoords = coordX + 'px' + ', ' + coordY + 'px';
+    var defaultCoords = Number(window.pin.mainX.replace(/\D+/g, '')) + ',' + Number(window.pin.mainY.replace(/\D+/g, ''));
+    var mainPinCoords = coordX + ', ' + coordY;
     // проставляем в input address value переданных координат
     mapPinMainCoordsEl.value = coordX ? mainPinCoords : defaultCoords;
 
@@ -118,12 +120,10 @@
     capacityParentEl.innerHTML = '';
     var capacityEls = fillArr(optionIndex);
     addCapacityOptions(capacityEls);
-    return adFormEl.querySelector('#capacity');
+    return capacityParentEl;
   };
 
   var clearPreviewPhotos = function () {
-    var previewContainer = adFormEl.querySelector('.ad-form__photo');
-    var preview = adFormEl.querySelector('.ad-form-header__preview img');
     while (previewContainer.firstChild) {
       previewContainer.removeChild(previewContainer.firstChild);
     }
@@ -139,6 +139,7 @@
       mapFiltersElColArr[i].removeAttribute('disabled');
     });
     // pricePlaceHolder changing
+    formHouseTypePriceEl.min = TYPE_OF_HOUSE_MIN_PRICE[formHouseTypeEl.value];
     formHouseTypeEl.addEventListener('change', onSelectOptionChange);
   };
 
@@ -267,9 +268,9 @@
   var onLoad = function () {
     pageDeactivate(true);
     var template = document.querySelector('#success').content.querySelector('.success');
-    var domElement = template.cloneNode(true);
-    var parentElement = document.querySelector('main');
-    parentElement.insertAdjacentElement('afterbegin', domElement);
+    var domEl = template.cloneNode(true);
+    var parentEl = window.data.mainEl;
+    parentEl.insertAdjacentElement('afterbegin', domEl);
 
     var onSuccessSubmitClick = function () {
       var successBtnClick = document.querySelector('.success');
@@ -308,6 +309,8 @@
     setAddrCoords: setAddrCoords,
     activate: pageActivate,
     onLoad: onLoad,
-    element: adFormEl
+    element: adFormEl,
+    adPhotoEl: previewContainer,
+    adHeaderImgEl: preview
   };
 })();

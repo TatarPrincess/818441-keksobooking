@@ -14,7 +14,7 @@
 
   var changeUserAvatar = function () {
     var fileChooserEl = formEl.querySelector('.ad-form__field input[type=file]');
-    var previewImgEl = formEl.querySelector('.ad-form-header__preview img');
+    var previewImgEl = window.pageForm.adHeaderImgEl;
 
     fileChooserEl.addEventListener('change', function () {
       var file = fileChooserEl.files[0];
@@ -40,7 +40,7 @@
 
   var uploadAccomodationPhotos = function () {
     var fileChooserEl = formEl.querySelector('.ad-form__upload input[type=file]');
-    var previewImgContainerEl = formEl.querySelector('.ad-form__photo');
+    var previewImgContainerEl = window.pageForm.adPhotoEl;
 
     fileChooserEl.addEventListener('change', function () {
       var fileList = fileChooserEl.files;

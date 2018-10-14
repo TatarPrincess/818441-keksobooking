@@ -1,54 +1,36 @@
 'use strict';
 
 (function () {
-  var MAX_PIN_QUANTITY = 5;
   var advtItems = [];
-  var responseArr;
-
-  // генератор случайных целых чисел
-  var getRandomIntInclusive = function (min, max) {
-    return Math.floor(Math.random() * (max - min + 1)) + min;
-  };
-
-  var getRandomArrIndex = function (arr) {
-    var randomItem = arr[getRandomIntInclusive(0, arr.length - 1)];
-    var randomItemIdx = arr.indexOf(randomItem);
-    if (randomItemIdx) {
-      responseArr = arr.splice(randomItemIdx, 1);
-    }
-    return randomItem;
-  };
+  var parentEl = document.querySelector('main');
 
   var onLoad = function (response) {
     // создание массива объектов карточек
-    for (var i = 0; i < MAX_PIN_QUANTITY; i++) {
-      responseArr = response;
-      var dataArrItem = getRandomArrIndex(responseArr);
+    [].forEach.call(response, function (item, i) {
       advtItems[i] = {
         author: {
-          avatar: dataArrItem.author.avatar
+          avatar: item.author.avatar
         },
         location: {
-          x: dataArrItem.location.x,
-          y: dataArrItem.location.y
+          x: item.location.x,
+          y: item.location.y
         },
         offer: {
-          title: dataArrItem.offer.title,
-          address: dataArrItem.offer.address,
-          price: dataArrItem.offer.price,
-          type: dataArrItem.offer.type,
-          rooms: dataArrItem.offer.rooms,
-          guests: dataArrItem.offer.guests,
-          checkin: dataArrItem.offer.checkin,
-          checkout: dataArrItem.offer.checkout,
-          features: dataArrItem.offer.features,
-          description: dataArrItem.offer.description,
-          photos: dataArrItem.offer.photos
-        },
+          title: item.offer.title,
+          address: item.offer.address,
+          price: item.offer.price,
+          type: item.offer.type,
+          rooms: item.offer.rooms,
+          guests: item.offer.guests,
+          checkin: item.offer.checkin,
+          checkout: item.offer.checkout,
+          features: item.offer.features,
+          description: item.offer.description,
+          photos: item.offer.photos
+        }
       };
-    }
+    });
     window.pin.draw();
-
   };
 
   var onError = function (errMsg) {
@@ -57,7 +39,6 @@
     var el = domEl.querySelector('.error__message');
     var btnEl = domEl.querySelector('.error__button');
     el.textContent = errMsg;
-    var parentEl = document.querySelector('main');
     parentEl.insertAdjacentElement('afterbegin', domEl);
 
     var onBtnErrorClick = function () {
@@ -86,7 +67,8 @@
   window.data = {
     onLoad: onLoad,
     onError: onError,
-    advtItems: advtItems
+    advtItems: advtItems,
+    mainEl: parentEl
   };
 
 })();

@@ -1,6 +1,7 @@
 'use strict';
 
 (function () {
+  var MAX_PIN_QUANTITY = 5;
   var mapPinMainEl = document.querySelector('.map__pin--main');
   var mainPinX = mapPinMainEl.style.left;
   var mainPinY = mapPinMainEl.style.top;
@@ -49,7 +50,15 @@
   // отрисовываем dom-элемент пина
   var pinParentEl = document.querySelector('.map__pins');
   var drawPins = function (array) {
-    var arrayToDraw = (array) ? array : window.data.advtItems;
+
+    var initialArr = window.data.advtItems.slice(0);
+
+    var reduceArray = function (arr) {
+      var dataReducedArr = arr.slice(0, MAX_PIN_QUANTITY);
+      return dataReducedArr;
+    };
+
+    var arrayToDraw = (array) ? reduceArray(array) : reduceArray(initialArr);
     var fragment = document.createDocumentFragment();
     arrayToDraw.forEach(function (item, i) {
       var pinElementFinal = createDomElementPin(arrayToDraw[i]);
