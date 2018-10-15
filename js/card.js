@@ -8,7 +8,7 @@
     house: 'Дом',
     palace: 'Дворец'
   };
-  var mapEl = document.querySelector('.map');
+  var mapEl = window.pin.mapEl;
   var articleEl;
   var popupCloseEl;
   var photos;

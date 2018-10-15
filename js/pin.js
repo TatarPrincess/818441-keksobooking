@@ -7,6 +7,7 @@
   var mainPinY = mapPinMainEl.style.top;
   var pinElCollection;
   var pinElCollArr;
+  var mapEl = document.querySelector('.map');
 
   // создаем dom-элемент пина
   var createDomElementPin = function (objectItem) {
@@ -90,6 +91,7 @@
     clear: clearPins,
     mainX: mainPinX,
     mainY: mainPinY,
-    mainEl: mapPinMainEl
+    mainEl: mapPinMainEl,
+    mapEl: mapEl
   };
 })();

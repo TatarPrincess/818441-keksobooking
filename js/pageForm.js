@@ -20,7 +20,7 @@
     2: [1, 2, 3],
     3: [0]
   };
-  var mapEl = window.card.mapEl;
+  var mapEl = window.pin.mapEl;
   var adFormEl = document.querySelector('.ad-form');
   var adFormHeaderEl = adFormEl.querySelector('.ad-form-header');
   var adFormElCollection = adFormEl.querySelectorAll('.ad-form__element');
@@ -50,6 +50,7 @@
   var previewContainer = adFormEl.querySelector('.ad-form__photo');
   var preview = adFormEl.querySelector('.ad-form-header__preview img');
 
+
   // PAGE
 
   var onPageFirstLoad = function () {
@@ -57,12 +58,14 @@
   };
 
   var pageActivate = function () {
-    mapEl.classList.remove('map--faded');
-    changeFormOnPageActivate();
-    if (window.data.advtItems.length) {
-      window.pin.draw();
-    } else {
-      window.backend.load(window.data.onLoad, window.data.onError);
+    if (mapEl.classList.contains('map--faded')) {
+      mapEl.classList.remove('map--faded');
+      changeFormOnPageActivate();
+      if (window.data.advtItems.length) {
+        window.pin.draw();
+      } else {
+        window.backend.load(window.data.onLoad, window.data.onError);
+      }
     }
   };
 

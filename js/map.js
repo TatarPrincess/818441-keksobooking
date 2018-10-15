@@ -3,7 +3,7 @@
 (function () {
   var MIN_TOP_COORDINATE = 130;
   var MAX_BOTTOM_COORDINATE = 630;
-  var mapEl = window.card.mapEl;
+  var mapEl = window.pin.mapEl;
   var mapPinMainEl = window.pin.mainEl;
 
   // ДОБАВЛЯЕМ СОБЫТИЯ

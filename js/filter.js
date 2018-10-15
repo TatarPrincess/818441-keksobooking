@@ -5,7 +5,7 @@
   var PRICE_TOP_MARGIN = 50000;
   var DEBOUNCE_INTERVAL = 500; // миллисекунды
 
-  var mapEl = window.card.mapEl;
+  var mapEl = window.pin.mapEl;
   var filterFormEl = document.querySelector('.map__filters');
   var typeEl = mapEl.querySelector('#housing-type');
   var priceEl = mapEl.querySelector('#housing-price');
